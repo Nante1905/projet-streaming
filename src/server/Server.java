@@ -20,17 +20,23 @@ import ws.schild.jave.InputFormatException;
 public class Server {
     public static void main(String[] args) throws IOException, UnsupportedAudioFileException, IllegalArgumentException, InputFormatException, EncoderException {
         ServerSocket serve = new ServerSocket(4444);
-        // String msg = "abcdefghij";
-        File f = new File("C:/Users/minoh/ITU/L2/S3/sys-admin/projet-streaming/assets/Astrid.mp3");
-        FileInputStream inputStream = new FileInputStream(f);
-        byte[] bytes = inputStream.readAllBytes();
-        while (true) {
+        while(true) {
             Socket client = serve.accept();
-            System.out.println(client.getInetAddress());
-            DataOutputStream out = new DataOutputStream(client.getOutputStream());
-            out.writeUTF(f.getName().toLowerCase());
-            out.write(bytes);
+            System.out.println(client.getInetAddress().getHostName());
+            Thread clientSend = new Thread(new ServerListenerThread(client));
+            clientSend.start();
         }
+        // String msg = "abcdefghij";
+        // File f = new File("C:/Users/minoh/ITU/L2/S3/sys-admin/projet-streaming/assets/Astrid.mp3");
+        // FileInputStream inputStream = new FileInputStream(f);
+        // byte[] bytes = inputStream.readAllBytes();
+        // while (true) {
+        //     Socket client = serve.accept();
+        //     System.out.println(client.getInetAddress());
+        //     DataOutputStream out = new DataOutputStream(client.getOutputStream());
+        //     out.writeUTF(f.getName().toLowerCase());
+        //     out.write(bytes);
+        // }
         // File f = new File("C:/Users/minoh/ITU/L2/S3/sys-admin/projet-streaming/assets/video/test.mp4");
         // File converted = Tomkv.convert(f);
 

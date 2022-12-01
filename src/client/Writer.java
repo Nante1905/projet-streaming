@@ -21,23 +21,26 @@ public class Writer implements Runnable {
             int len = 100;
             byte[] read = new byte[len];
             int readable = in.read(read);
-            while(readable != -1) {
-                System.out.println("copying ...");
+            System.out.println("copying ...");
+            // int i = 0;
+            // while(readable != -1) {
+            //     out.write(read);
+            //     readable = in.read(read);
+            //     // Thread.sleep(1000);
+            //     System.out.println(i);
+            //     i++;
+            // }
+            while(readable == len) {
+                // System.out.println(readable);
                 out.write(read);
                 readable = in.read(read);
                 // Thread.sleep(1000);
             }
-            // while(readable == len) {
-            //     System.out.println(readable);
-            //     out.write(read);
-            //     readable = in.read(read);
-            //     Thread.sleep(1000);
-            // }
-            // byte[] ambiny = new byte[readable];
-            // for(int i = 0; i<readable; i++) {
-            //     ambiny[i] = read[i];
-            // }
-            // out.write(ambiny);
+            byte[] ambiny = new byte[readable];
+            for(int i = 0; i<readable; i++) {
+                ambiny[i] = read[i];
+            }
+            out.write(ambiny);
             System.out.println("copy finished");
             out.close();
         } catch (Exception e) {
