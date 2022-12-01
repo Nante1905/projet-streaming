@@ -1,83 +1,88 @@
 package client;
 
+import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Vector;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
 
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import player.AudioPlay;
+import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 
 /**
  * Client
  */
 public class Client {
 
-    public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException, UnsupportedAudioFileException, LineUnavailableException, JavaLayerException {
+    public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException,
+            UnsupportedAudioFileException, LineUnavailableException, JavaLayerException {
         Socket client = new Socket("127.0.0.1", 4444);
         DataInputStream in = new DataInputStream(client.getInputStream());
-        FileOutputStream outputStream = new FileOutputStream(new File("C:/Users/minoh/ITU/L2/S3/sys-admin/byte-server-test/assets/response.mp3"));
-        int len = 3000000;
+        // FileOutputStream outputStream = new FileOutputStream(new
+        // File("C:/Users/minoh/ITU/L2/S3/sys-admin/byte-server-test/assets/response.mp3"));
+
+        int len = 100000;
         // int receive = 0;
         int i = 0;
         byte[] b = new byte[len];
         byte msg;
-        while(true) {
-            msg = in.readByte();
-            if(i < len) {
-                b[i] = msg;
-                i++;
-            }
-            else if(i >= len) {
-                System.out.println("playing ...");
-                // Thread play = new Thread(new AudioPlay(b));
-                // play.start();
+        String filename = in.readUTF();
+        System.out.println(filename);
+
+        /* Music player */
+        if (filename.contains(".mp3")) {
+            while (true) {
+                in.readFully(b, 0, len);
                 play(b);
-                i=0;
+                System.out.println("playing ...");
+                // if(i < len) {
+                // b[i] = msg;
+                // i++;
+                // }
+                // else if(i >= len) {
+                // System.out.println("playing ...");
+                // // Thread play = new Thread(new AudioPlay(b));
+                // // play.start();
+                // play(b);
+                // i=0;
+                // }
             }
-            // msg = in.readByte();
-            // b[0] = msg;
-            // play(b);
-            // System.out.println("Playing ...");
-            // b[i] = msg;
-            // if(i < len) {
-            //     continue;
-            // } else {
-            //     System.out.println("Playing ...");
-            //     Client.play(b);
-            //     i = -1;
-            //     b = new byte[len];
-            // }
-            // i++;
-            
-            // outputStream.write(b);
-            // System.out.println(b);
-            // Thread.sleep(1000);
         }
+        /* ------------------------------ */
+        else if (filename.contains(".jpg") || filename.contains(".png") || filename.contains(".jpeg")) {
+        }
+        else if (filename.contains(".mkv")) {
+            File temp = File.createTempFile("temp", "mkv");
+            FileOutputStream out = new FileOutputStream(temp);
+            Thread write = new Thread(new Writer(in, out));
+            write.start();
+            EmbeddedMediaPlayerComponent component = new EmbeddedMediaPlayerComponent();
+            JFrame f = new JFrame();
+            f.setContentPane(component);
+            f.setBounds(new Rectangle(200, 200, 800, 600));
+            f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            f.setVisible(true);
+            Thread.sleep(2000);
+            component.mediaPlayer().media().play(temp.toPath().toString());
+        }
+
     }
 
-    public static void play(byte[] data) throws UnsupportedAudioFileException, IOException, LineUnavailableException, JavaLayerException {
+    public static void play(byte[] data)
+            throws UnsupportedAudioFileException, IOException, LineUnavailableException, JavaLayerException {
         DataInputStream in = new DataInputStream(new ByteArrayInputStream(data));
         Player player = new Player(in);
         player.play();
     }
-    // public static void playo(byte[] data) throws UnsupportedAudioFileException, IOException, LineUnavailableException {
-    //     AudioInputStream ais = AudioSystem.getAudioInputStream(new ByteArrayInputStream(data));
-    //     DataLine.Info info = new DataLine.Info(Clip.class, ais.getFormat());
-    //     Clip clip = (Clip) AudioSystem.getLine(info);
-    //     clip.open(ais);
-    //     clip.start();
-    // }
 }
