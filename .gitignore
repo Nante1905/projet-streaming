@@ -1,5 +1,5 @@
-./bin
-./assets
+/bin
+/assets
 *.jpg
 *.jpeg
 *.mp3
