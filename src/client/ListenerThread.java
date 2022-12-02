@@ -38,12 +38,16 @@ public class ListenerThread implements Runnable {
         try {
             in = new DataInputStream(server.getInputStream());
             String filename = in.readUTF();
+            while(filename.contains(";")) {
+                filename = in.readUTF();
+            }
             // while (true) {
+            System.out.println("Checking files "+filename+" ...");
                 /* Music player */
                 if (filename.contains(".mp3")) {
                     JLabel songLabel = new JLabel("Playing "+ filename);
                     JFrame f = new JFrame();
-                    f.setBounds(new Rectangle(200, 200, 800, 600));
+                    f.setBounds(new Rectangle(200, 200, 800, 200));
                     f.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
                     f.add(songLabel);
                     f.setVisible(true);
@@ -74,6 +78,7 @@ public class ListenerThread implements Runnable {
 
                 /* VID */
                 else if (filename.contains(".mkv")) {
+                    System.out.println("Loading video ...");
                     // File temp = new File("assets/video/temp.mkv");
                     File temp = File.createTempFile("temp", "mkv");
                     FileOutputStream out = new FileOutputStream(temp);

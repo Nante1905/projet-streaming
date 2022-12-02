@@ -15,6 +15,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 
+import client.frontend.ClientWindow;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
@@ -27,8 +28,9 @@ public class Client {
     public static void main(String[] args) throws UnknownHostException, IOException, InterruptedException,
             UnsupportedAudioFileException, LineUnavailableException, JavaLayerException {
         Socket client = new Socket("127.0.0.1", 4444);
-        Thread requester = new Thread(new RequesterThread(client));
-        requester.start();
+        ClientWindow win = new ClientWindow(client);
+        // Thread requester = new Thread(new RequesterThread(client));
+        // requester.start();
         // DataInputStream in = new DataInputStream(client.getInputStream());
 
         // int len = 100000;

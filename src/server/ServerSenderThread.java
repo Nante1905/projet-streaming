@@ -17,10 +17,12 @@ public class ServerSenderThread implements Runnable {
 
     Socket client;
     String reqClient;
+    DataOutputStream test;
 
-    public ServerSenderThread(Socket client, String reqClient) {
+    public ServerSenderThread(Socket client, String reqClient, DataOutputStream test) {
         this.client = client;
         this.reqClient = reqClient;
+        this.test = test;
     }
 
     @Override
@@ -45,10 +47,11 @@ public class ServerSenderThread implements Runnable {
                 byte[] bytes = convertedInput.readAllBytes();
                 System.out.println(bytes.length);
                     
-                out.writeUTF(converted.getName().toLowerCase());
+                test.writeUTF(converted.getName().toLowerCase());
                 System.out.println(converted.getName());
                 // while (true) {
-                out.write(bytes);
+                test.write(bytes);
+                test.flush();
                 // }
             }
             else if(type.equals("song")) {
