@@ -1,9 +1,7 @@
 package client;
 
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
-import java.util.Scanner;
 
 public class RequesterThread implements Runnable {
 
@@ -30,7 +28,7 @@ public class RequesterThread implements Runnable {
                 System.out.println("Requested data");
                 // System.out.println("Waiting for server ...");
                 // Thread.sleep(5000);
-                if(current!=null) {
+                while (current!=null && current.isAlive()) {
                     this.current.interrupt();
                     System.out.println("current action stoped : "+this.current.isAlive());
                 }

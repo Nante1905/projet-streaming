@@ -8,14 +8,13 @@ import java.net.SocketException;
 
 import converter.Tomkv;
 
-public class ServerSenderThread implements Runnable {
-
+public class ServerSendTest extends Thread {
 
     Socket client;
     String reqClient;
     DataOutputStream test;
 
-    public ServerSenderThread(Socket client, String reqClient, DataOutputStream test) {
+    public ServerSendTest(Socket client, String reqClient, DataOutputStream test) {
         this.client = client;
         this.reqClient = reqClient;
         this.test = test;
@@ -47,27 +46,12 @@ public class ServerSenderThread implements Runnable {
                 System.out.println(converted.getName());
                 // while (true) {
                 test.write(bytes);
-                // test.flush();
+                test.flush();
                 convertedInput.close();
                 while(converted.exists()) {
                     converted.delete();
                 }
                 // }
-            }
-            else if(type.equals("song")) {
-                File audioDir = new File("assets/audio");
-                File[] allAudio = audioDir.listFiles();
-                int toSendIndex = Integer.parseInt(num);
-                File toSend = allAudio[toSendIndex-1];
-                FileInputStream in = new FileInputStream(toSend);
-                byte[] bytes = in.readAllBytes();
-                System.out.println(bytes.length);
-                    
-                out.writeUTF(toSend.getName().toLowerCase());
-                System.out.println(toSend.getName());
-                out.write(bytes);
-
-                in.close();
             }
             else if (type.equals("img")) {
                 File imgDir = new File("assets/img");
@@ -78,10 +62,25 @@ public class ServerSenderThread implements Runnable {
                 byte[] bytes = in.readAllBytes();
                 System.out.println(bytes.length);
                     
-                out.writeUTF(toSend.getName().toLowerCase());
-                out.writeUTF(String.valueOf(bytes.length));
+                test.writeUTF(toSend.getName().toLowerCase());
+                test.writeUTF(String.valueOf(bytes.length));
                 System.out.println(toSend.getName());
-                out.write(bytes);
+                test.write(bytes);
+
+                in.close();
+            }
+            else if(type.equals("song")) {
+                File audioDir = new File("assets/audio");
+                File[] allAudio = audioDir.listFiles();
+                int toSendIndex = Integer.parseInt(num);
+                File toSend = allAudio[toSendIndex-1];
+                FileInputStream in = new FileInputStream(toSend);
+                byte[] bytes = in.readAllBytes();
+                System.out.println(bytes.length);
+                    
+                test.writeUTF(toSend.getName().toLowerCase());
+                System.out.println(toSend.getName());
+                test.write(bytes);
 
                 in.close();
             }
@@ -91,5 +90,31 @@ public class ServerSenderThread implements Runnable {
             e1.printStackTrace();
         }
     }
+
+    public Socket getClient() {
+        return client;
+    }
+
+    public void setClient(Socket client) {
+        this.client = client;
+    }
+
+    public String getReqClient() {
+        return reqClient;
+    }
+
+    public void setReqClient(String reqClient) {
+        this.reqClient = reqClient;
+    }
+
+    public DataOutputStream getTest() {
+        return test;
+    }
+
+    public void setTest(DataOutputStream test) {
+        this.test = test;
+    }
+
+    
     
 }

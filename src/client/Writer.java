@@ -1,7 +1,6 @@
 package client;
 
 import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 public class Writer implements Runnable {
@@ -21,7 +20,7 @@ public class Writer implements Runnable {
             int len = 100;
             byte[] read = new byte[len];
             int readable = in.read(read);
-            System.out.println("copying ...");
+            System.out.println("Loading video ...");
             // int i = 0;
             // while(readable != -1) {
             //     out.write(read);
@@ -41,7 +40,7 @@ public class Writer implements Runnable {
                 ambiny[i] = read[i];
             }
             out.write(ambiny);
-            System.out.println("copy finished");
+            System.out.println("video loaded");
             out.close();
         } catch (Exception e) {
             // TODO: handle exception

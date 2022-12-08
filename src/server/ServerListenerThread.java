@@ -46,12 +46,17 @@ public class ServerListenerThread implements Runnable {
                 in = new DataInputStream(client.getInputStream());
                 String reqClient = in.readUTF();
                 System.out.println(reqClient);
-                if(current != null) {
-                    current.interrupt();
-                    System.out.println("current flux interrupted");
-                    System.out.println(current.isAlive());
+                if (current != null) {
+                    // current.getTest().close();
+                    current.interrupt();;
+                    System.out.println("Attempting to stop sender");
                 }
+                if (current != null) {
+                    System.out.println("Alive status : " + current.isAlive());
+                }
+
                 Thread send = new Thread(new ServerSenderThread(client, reqClient, out));
+                // ServerSendTest send = new ServerSendTest(client, reqClient, out);
                 this.current = send;
                 send.start();
             }

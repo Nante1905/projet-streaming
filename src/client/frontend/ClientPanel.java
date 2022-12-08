@@ -7,35 +7,36 @@ import java.net.Socket;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-public class VideoPanel extends JPanel {
+public class ClientPanel extends JPanel {
 
     Socket server;
 
-    public VideoPanel(Socket server) throws IOException {
+    public ClientPanel(Socket server) throws IOException {
         this.server = server;
         DataInputStream in = new DataInputStream(this.server.getInputStream());
-        String videoData = in.readUTF();
-        String[] videos = videoData.split(";");
+        String data = in.readUTF();
+        String[] dataList = data.split(";");
         int songiter = 1;
         int viditer = 1;
         int imgiter = 1;
-        for (String video : videos) {
+        RequesterListener listener = new RequesterListener(server);
+        for (String file : dataList) {
             String req = "";
-            if(video.contains(".mp3")) {
+            if(file.contains(".mp3")) {
                 req = "song:"+songiter;
                 songiter++;
             }
-            else if(video.contains(".png")) {
+            else if(file.contains(".png")) {
                 req = "img:"+imgiter;
                 imgiter++;
             }
-            else if(video.contains(".mp4")) {
+            else if(file.contains(".mp4")) {
                 req = "vid:"+viditer;
                 viditer++;
             }
-            JButton btn = new JButton(video);
+            JButton btn = new JButton(file);
             btn.setActionCommand(req);
-            btn.addMouseListener(new RequesterListener(this.server));
+            btn.addMouseListener(listener);
             this.add(btn);
         }
         this.setVisible(true);

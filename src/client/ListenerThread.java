@@ -3,12 +3,12 @@ package client;
 import java.awt.Rectangle;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -25,6 +25,7 @@ import uk.co.caprica.vlcj.player.component.EmbeddedMediaPlayerComponent;
 public class ListenerThread implements Runnable {
 
     Socket server;
+    Boolean playaudio;
 
     public ListenerThread(Socket server) {
         this.server = server;
@@ -38,26 +39,90 @@ public class ListenerThread implements Runnable {
         try {
             in = new DataInputStream(server.getInputStream());
             String filename = in.readUTF();
+            // int testi = 0;
+            // while(filename.equals("a")) {
+            //     try {
+            //         filename = in.readUTF();
+            //     } catch (Exception e) {
+            //         in.readByte();
+            //     }
+            //     System.out.println(testi);
+            //     testi++;
+            // }
             while(filename.contains(";")) {
+                // System.out.println("point virgule");
                 filename = in.readUTF();
             }
             // while (true) {
             System.out.println("Checking files "+filename+" ...");
                 /* Music player */
                 if (filename.contains(".mp3")) {
+                    playaudio = true;
                     JLabel songLabel = new JLabel("Playing "+ filename);
                     JFrame f = new JFrame();
                     f.setBounds(new Rectangle(200, 200, 800, 200));
                     f.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+                    f.addWindowListener(new WindowListener() {
+
+                        @Override
+                        public void windowOpened(WindowEvent e) {
+                            // TODO Auto-generated method stub
+                            
+                        }
+
+                        @Override
+                        public void windowClosing(WindowEvent e) {
+                            // TODO Auto-generated method stub
+                            playaudio = false;
+                        }
+
+                        @Override
+                        public void windowClosed(WindowEvent e) {
+                            // TODO Auto-generated method stub
+                            
+                        }
+
+                        @Override
+                        public void windowIconified(WindowEvent e) {
+                            // TODO Auto-generated method stub
+                            
+                        }
+
+                        @Override
+                        public void windowDeiconified(WindowEvent e) {
+                            // TODO Auto-generated method stub
+                            
+                        }
+
+                        @Override
+                        public void windowActivated(WindowEvent e) {
+                            // TODO Auto-generated method stub
+                            
+                        }
+
+                        @Override
+                        public void windowDeactivated(WindowEvent e) {
+                            // TODO Auto-generated method stub
+                            
+                        }
+
+                    });
                     f.add(songLabel);
                     f.setVisible(true);
                     int len = 100000;
                     byte[] b = new byte[len];
+                    int readable = len;
                     System.out.println("playing ...");
-                    while (true) {
-                        in.readFully(b, 0, len);
+                    while (playaudio && readable == len) {
+                        readable = in.read(b);
                         play(b);
                     }
+
+                    byte[] reste = new byte[readable];
+                    for(int i = 0; i<readable; i++) {
+                        reste[i] = b[i];
+                    }
+                    play(b);
                 }
 
                 /* IMG */
@@ -89,7 +154,7 @@ public class ListenerThread implements Runnable {
                     f.setContentPane(component);
                     f.setBounds(new Rectangle(200, 200, 800, 600));
                     f.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-                    f.addWindowListener(new VideoListener(component));
+                    f.addWindowListener(new VideoListener(component, temp));
                     Thread.sleep(2000);
                     f.setVisible(true);
                     component.mediaPlayer().media().play(temp.toPath().toString());
