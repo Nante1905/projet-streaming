@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.net.Socket;
 import java.net.SocketException;
 
-import converter.Tomkv;
+import server.converter.Tomkv;
 
 public class ServerSenderThread implements Runnable {
 

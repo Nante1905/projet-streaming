@@ -9,7 +9,9 @@ import java.io.IOException;
 import java.net.Socket;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.Image;
 
+import javax.imageio.ImageIO;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.ImageIcon;
@@ -39,22 +41,12 @@ public class ListenerThread implements Runnable {
         try {
             in = new DataInputStream(server.getInputStream());
             String filename = in.readUTF();
-            // int testi = 0;
-            // while(filename.equals("a")) {
-            //     try {
-            //         filename = in.readUTF();
-            //     } catch (Exception e) {
-            //         in.readByte();
-            //     }
-            //     System.out.println(testi);
-            //     testi++;
-            // }
             while(filename.contains(";")) {
-                // System.out.println("point virgule");
                 filename = in.readUTF();
             }
             // while (true) {
             System.out.println("Checking files "+filename+" ...");
+
                 /* Music player */
                 if (filename.contains(".mp3")) {
                     playaudio = true;
@@ -66,43 +58,36 @@ public class ListenerThread implements Runnable {
 
                         @Override
                         public void windowOpened(WindowEvent e) {
-                            // TODO Auto-generated method stub
                             
                         }
 
                         @Override
                         public void windowClosing(WindowEvent e) {
-                            // TODO Auto-generated method stub
                             playaudio = false;
                         }
 
                         @Override
                         public void windowClosed(WindowEvent e) {
-                            // TODO Auto-generated method stub
                             
                         }
 
                         @Override
                         public void windowIconified(WindowEvent e) {
-                            // TODO Auto-generated method stub
                             
                         }
 
                         @Override
                         public void windowDeiconified(WindowEvent e) {
-                            // TODO Auto-generated method stub
                             
                         }
 
                         @Override
                         public void windowActivated(WindowEvent e) {
-                            // TODO Auto-generated method stub
                             
                         }
 
                         @Override
                         public void windowDeactivated(WindowEvent e) {
-                            // TODO Auto-generated method stub
                             
                         }
 
@@ -132,11 +117,16 @@ public class ListenerThread implements Runnable {
                     int len = Integer.parseInt(lenStr);
                     byte[] imgByte = new byte[len];
                     in.readFully(imgByte);
-                    ImageIcon img = new ImageIcon(imgByte);
-                    JLabel labelImg = new JLabel(img);
                     JFrame f = new JFrame();
                     f.setBounds(new Rectangle(200, 200, 800, 600));
                     f.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+
+                    Image image = ImageIO.read(new ByteArrayInputStream(imgByte));
+                    image = image.getScaledInstance(f.getWidth(), f.getHeight(), Image.SCALE_SMOOTH);
+                    JLabel labelImg = new JLabel();
+                    ImageIcon icon = new ImageIcon(image);
+                    labelImg.setIcon(icon);
+                    
                     f.add(labelImg);
                     f.setVisible(true);
                 }
@@ -157,6 +147,7 @@ public class ListenerThread implements Runnable {
                     f.addWindowListener(new VideoListener(component, temp));
                     Thread.sleep(2000);
                     f.setVisible(true);
+                    component.mediaPlayer().audio().setVolume(200);
                     component.mediaPlayer().media().play(temp.toPath().toString());
                 }
             // }

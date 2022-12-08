@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.net.Socket;
 import java.net.SocketException;
 
-import converter.Tomkv;
+import server.converter.Tomkv;
 
 public class ServerSendTest extends Thread {
 
@@ -24,9 +24,7 @@ public class ServerSendTest extends Thread {
     public void run() {
         DataOutputStream out;
         try {
-            // in = new DataInputStream(client.getInputStream());
             out = new DataOutputStream(client.getOutputStream());
-            // String reqClient = in.readUTF();
             System.out.println(this.reqClient);
             String[] reqClientDetail = this.reqClient.split(":");
             String type = reqClientDetail[0].toLowerCase();
