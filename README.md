@@ -9,3 +9,6 @@
 * VLCJ 4.7.1
 * JAVE 3.3.1
 * JLayer 1.0.1
+
+## Prerequisite
+* VLC 3.0.17 or higher
